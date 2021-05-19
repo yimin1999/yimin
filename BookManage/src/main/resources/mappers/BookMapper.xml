@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--namespace 用来引用和dao的映射关系-->
+<mapper namespace="com.chuangke.dao.IBookDao">
+    <resultMap id="bookMapper" type="com.chuangke.entity.BookInfo">
+        <association property="type" column="btid" select="com.chuangke.dao.IBookTypeDao.queryById"></association>
+    </resultMap>
+    <select id="queryAll" parameterType="java.util.Map" resultMap="bookMapper" >
+      SELECT * FROM bookinfo
+      <where>
+          <if test="btid!=null and btid!=''">
+              btid=#{btid}
+          </if>
+          <if test="bname!=null and bname!=''">
+              and bname like '%${bname}%'
+          </if>
+      </where>
+    </select>
+
+</mapper>

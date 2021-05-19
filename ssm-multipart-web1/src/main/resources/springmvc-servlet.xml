@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd 
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd 
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd 
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd 
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
+
+
+	<context:component-scan base-package="com.chuangke.controller"/>
+<!--	解决springmvc静态资源的访问问题：
+	开启springmvc的默认的servlet，当静态资源没有找到控制器能处理的时候，
+	这个默认的servlet开始生效，他会找到我们需要的静态资源返回给我们
+	-->
+	<mvc:default-servlet-handler></mvc:default-servlet-handler>
+	<mvc:annotation-driven></mvc:annotation-driven>
+
+<!--	配置thymeleaf解析器-->
+	<bean id="thymeleaf" class="org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver">
+		<property name="prefix" value="/WEB-INF/templates/"/>
+		<property name="characterEncoding" value="utf-8"/>
+		<property name="suffix" value=".html"/>
+	</bean>
+	<bean id="engine" class="org.thymeleaf.spring5.SpringTemplateEngine">
+		<property name="templateResolver" ref="thymeleaf"/>
+	</bean>
+	<bean class="org.thymeleaf.spring5.view.ThymeleafViewResolver">
+		<property name="characterEncoding" value="UTF-8"/>
+		<property name="templateEngine" ref="engine"/>
+	</bean>
+
+<!--	配置电子邮件  -->
+	<context:property-placeholder location="classpath:email.properties"></context:property-placeholder>
+	<bean class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="${host}"/>
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.smtp.auth">${mail_smtp_auth}</prop>
+				<prop key="mail.smtp.timeout">${mail_smtp_timeout}</prop>
+			</props>
+		</property>
+		<property name="username" value="${user_name}"/>
+		<property name="password" value="${user_password}"/>
+		<property name="defaultEncoding" value="UTF-8"/>
+	</bean>
+</beans>
